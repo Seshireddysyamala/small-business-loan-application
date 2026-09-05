@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Apply for small-business financing or resume an existing application.">
+
+    <title>Business Lending Application</title>
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+</head>
+
+<body>
+<header class="site-header">
+    <div class="header-inner">
+        <a class="brand" href="/" aria-label="Business Lending home">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>Business Lending</span>
+        </a>
+
+        <span class="secure-label">
+            <span class="secure-dot" aria-hidden="true"></span>
+            Application portal
+        </span>
+    </div>
+</header>
+
+<main class="application-page">
+    <section class="application-intro" aria-labelledby="pageTitle">
+        <p class="eyebrow">Business financing application</p>
+        <h1 id="pageTitle">Apply with your business in mind.</h1>
+        <p class="intro-copy">
+            Tell us about your company, financing needs, and the person we should contact.
+            Most applicants complete this form in about 8 minutes.
+        </p>
+    </section>
+
+    <div class="application-layout">
+        <aside class="application-sidebar" aria-label="Application navigation">
+            <nav class="progress-nav" aria-label="Application sections">
+                <p class="sidebar-label">Application details</p>
+                <a class="progress-item active" href="#business-details" data-section="business-details">
+                    <span>01</span>
+                    Business
+                </a>
+                <a class="progress-item" href="#financing-request" data-section="financing-request">
+                    <span>02</span>
+                    Financing
+                </a>
+                <a class="progress-item" href="#primary-contact" data-section="primary-contact">
+                    <span>03</span>
+                    Contact
+                </a>
+                <a class="progress-item" href="#review-consent" data-section="review-consent">
+                    <span>04</span>
+                    Review
+                </a>
+            </nav>
+
+            <section class="resume-block" aria-labelledby="resumeTitle">
+                <h2 id="resumeTitle">Resume an application</h2>
+                <p>Enter the application number from your confirmation.</p>
+
+                <form id="lookupForm" class="lookup-form">
+                    <label for="lookupId">Application number</label>
+                    <div class="lookup-row">
+                        <input
+                                type="number"
+                                id="lookupId"
+                                min="1"
+                                inputmode="numeric"
+                                placeholder="e.g. 1042"
+                                required
+                        >
+                        <button type="submit" class="compact-button">Resume</button>
+                    </div>
+                </form>
+
+                <button id="resumeLastButton" type="button" class="text-button hidden"></button>
+                <p id="lookupMessage" class="inline-message" role="status" aria-live="polite"></p>
+            </section>
+        </aside>
+
+        <div class="application-workspace">
+            <form id="companyForm" class="loan-form">
+                <input type="hidden" id="companyId">
+
+                <div class="form-heading">
+                    <div>
+                        <p class="eyebrow" id="formMode">New application</p>
+                        <h2 id="formTitle">Business loan request</h2>
+                    </div>
+                    <span id="applicationStatus" class="status-badge">Not submitted</span>
+                </div>
+
+                <section id="business-details" class="form-section" aria-labelledby="businessHeading">
+                    <div class="section-copy">
+                        <span class="section-number">01</span>
+                        <div>
+                            <h3 id="businessHeading">Business details</h3>
+                            <p>Use the legal information associated with your business.</p>
+                        </div>
+                    </div>
+
+                    <div class="field-grid">
+                        <div class="field field-wide">
+                            <label for="companyName">Legal business name</label>
+                            <input
+                                    type="text"
+                                    id="companyName"
+                                    maxlength="150"
+                                    autocomplete="organization"
+                                    required
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label for="businessStructure">Business structure</label>
+                            <select id="businessStructure" required>
+                                <option value="">Select a structure</option>
+                                <option value="Sole proprietorship">Sole proprietorship</option>
+                                <option value="Partnership">Partnership</option>
+                                <option value="Limited liability company">Limited liability company (LLC)</option>
+                                <option value="Corporation">Corporation</option>
+                                <option value="Nonprofit">Nonprofit</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="industry">Industry</label>
+                            <select id="industry" required>
+                                <option value="">Select an industry</option>
+                                <option value="Construction">Construction</option>
+                                <option value="Food and hospitality">Food and hospitality</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Professional services">Professional services</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Transportation">Transportation</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="countryOfRegistration">Country of registration</label>
+                            <select id="countryOfRegistration" aria-describedby="countryHelp" required>
+                                <option value="">Select a country</option>
+                            </select>
+                            <small id="countryHelp">Some jurisdictions require an offline compliance review.</small>
+                        </div>
+
+                        <div class="field">
+                            <label for="yearsInBusiness">Years in business</label>
+                            <input type="number" id="yearsInBusiness" min="0" max="200" inputmode="numeric" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="annualRevenue">Annual gross revenue</label>
+                            <div class="money-input">
+                                <span aria-hidden="true">$</span>
+                                <input type="number" id="annualRevenue" min="0" step="0.01" inputmode="decimal" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="totalAssets">Estimated total business assets</label>
+                            <div class="money-input">
+                                <span aria-hidden="true">$</span>
+                                <input type="number" id="totalAssets" min="0" step="0.01" inputmode="decimal" required>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="financing-request" class="form-section" aria-labelledby="financingHeading">
+                    <div class="section-copy">
+                        <span class="section-number">02</span>
+                        <div>
+                            <h3 id="financingHeading">Financing request</h3>
+                            <p>Choose the financing that best matches your business need.</p>
+                        </div>
+                    </div>
+
+                    <div class="field-grid">
+                        <div class="field">
+                            <label for="loanType">Financing product</label>
+                            <select id="loanType" required>
+                                <option value="">Select a product</option>
+                                <option value="Business term loan">Business term loan</option>
+                                <option value="Business line of credit">Business line of credit</option>
+                                <option value="Equipment financing">Equipment financing</option>
+                                <option value="Commercial real estate loan">Commercial real estate loan</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="loanPurpose">Primary use of funds</label>
+                            <select id="loanPurpose" required>
+                                <option value="">Select a purpose</option>
+                                <option value="Working capital">Working capital</option>
+                                <option value="Equipment purchase">Equipment purchase</option>
+                                <option value="Business expansion">Business expansion</option>
+                                <option value="Inventory purchase">Inventory purchase</option>
+                                <option value="Commercial real estate">Commercial real estate</option>
+                                <option value="Refinance business debt">Refinance business debt</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="requestedLoanAmount">Amount requested</label>
+                            <div class="money-input">
+                                <span aria-hidden="true">$</span>
+                                <input
+                                        type="number"
+                                        id="requestedLoanAmount"
+                                        min="1000"
+                                        step="0.01"
+                                        inputmode="decimal"
+                                        aria-describedby="amountHelp"
+                                        required
+                                >
+                            </div>
+                            <small id="amountHelp">Minimum request: $1,000</small>
+                        </div>
+
+                        <div class="field">
+                            <label for="requestedTermMonths">Preferred repayment term</label>
+                            <select id="requestedTermMonths" required>
+                                <option value="">Select a term</option>
+                                <option value="12">12 months</option>
+                                <option value="24">24 months</option>
+                                <option value="36">36 months</option>
+                                <option value="48">48 months</option>
+                                <option value="60">60 months</option>
+                                <option value="120">120 months</option>
+                            </select>
+                        </div>
+
+                        <div class="field field-wide">
+                            <label for="creditScore">Estimated personal credit score</label>
+                            <input
+                                    type="number"
+                                    id="creditScore"
+                                    min="300"
+                                    max="850"
+                                    inputmode="numeric"
+                                    aria-describedby="creditHelp"
+                                    required
+                            >
+                            <small id="creditHelp">Use your best estimate. This demo does not pull a credit report.</small>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="primary-contact" class="form-section" aria-labelledby="contactHeading">
+                    <div class="section-copy">
+                        <span class="section-number">03</span>
+                        <div>
+                            <h3 id="contactHeading">Primary contact</h3>
+                            <p>Provide the person authorized to discuss this request.</p>
+                        </div>
+                    </div>
+
+                    <div class="field-grid">
+                        <div class="field field-wide">
+                            <label for="contactName">Full name</label>
+                            <input type="text" id="contactName" maxlength="120" autocomplete="name" required>
+                        </div>
+
+                        <div class="field field-wide">
+                            <label for="ssn">Social Security number</label>
+                            <input
+                                    type="password"
+                                    id="ssn"
+                                    maxlength="11"
+                                    inputmode="numeric"
+                                    autocomplete="off"
+                                    placeholder="123-45-6789"
+                                    pattern="(?:[0-9]{9}|[0-9]{3}-[0-9]{2}-[0-9]{4})"
+                                    title="Enter 9 digits as XXX-XX-XXXX"
+                                    aria-describedby="ssnHelp"
+                                    required
+                            >
+                            <small id="ssnHelp">Required for this demo workflow. Only the last four digits are stored.</small>
+                        </div>
+
+                        <div class="field">
+                            <label for="contactEmail">Business email</label>
+                            <input type="email" id="contactEmail" maxlength="150" autocomplete="email" required>
+                        </div>
+
+                        <div class="field">
+                            <label for="contactPhone">Phone number</label>
+                            <input
+                                    type="tel"
+                                    id="contactPhone"
+                                    maxlength="30"
+                                    autocomplete="tel"
+                                    placeholder="(555) 555-0123"
+                                    pattern="\+?[0-9() .-]{10,30}"
+                                    title="Enter a phone number containing 10 to 15 digits"
+                                    required
+                            >
+                        </div>
+                    </div>
+                </section>
+
+                <section id="review-consent" class="form-section review-section" aria-labelledby="reviewHeading">
+                    <div class="section-copy">
+                        <span class="section-number">04</span>
+                        <div>
+                            <h3 id="reviewHeading">Review and certify</h3>
+                            <p>Confirm the information is complete before submitting.</p>
+                        </div>
+                    </div>
+
+                    <label class="consent-row" for="certifyConsent">
+                        <input type="checkbox" id="certifyConsent" required>
+                        <span>
+                            I certify that I am authorized to submit this request and that the information
+                            provided is accurate to the best of my knowledge.
+                        </span>
+                    </label>
+
+                    <p class="disclosure">
+                        Submitting an application does not guarantee approval or commit you to a loan.
+                        This project is a demonstration and does not perform a credit inquiry.
+                    </p>
+                </section>
+
+                <div class="form-footer">
+                    <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
+
+                    <div class="button-row">
+                        <button id="cancelEditButton" type="button" class="secondary-button">Clear form</button>
+                        <button id="saveButton" type="submit">Submit application</button>
+                    </div>
+                </div>
+            </form>
+
+            <section id="confirmationPanel" class="confirmation-panel hidden" aria-labelledby="confirmationTitle">
+                <span class="confirmation-mark" aria-hidden="true">✓</span>
+                <p class="eyebrow">Application received</p>
+                <h2 id="confirmationTitle">Your request has been submitted.</h2>
+                <p>
+                    Save your application number. You will need it to return to this application.
+                </p>
+
+                <div class="application-number">
+                    <span>Application number</span>
+                    <strong id="confirmationId"></strong>
+                </div>
+
+                <p id="confirmationSummary" class="confirmation-summary"></p>
+
+                <div class="button-row">
+                    <button id="editApplicationButton" type="button">Review application</button>
+                    <button id="startNewButton" type="button" class="secondary-button">Start another</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>Business Lending application demo</p>
+    <p>Do not enter real financial or personally identifiable information.</p>
+</footer>
+</body>
+</html>
