@@ -1,0 +1,290 @@
+{
+  "info": {
+    "_postman_id": "7f50ec25-4f47-46db-b063-6f33df808a8a",
+    "name": "Small Business Loan API",
+    "description": "Exercises the four company loan application endpoints and their validation/error responses.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "applicationId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1 - Create loan application",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Returns 201 Created', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "const response = pm.response.json();",
+              "pm.collectionVariables.set('applicationId', String(response.id));",
+              "",
+              "pm.test('Stores only the SSN last four', function () {",
+              "    pm.expect(response.ssnLastFour).to.eql('6789');",
+              "    pm.expect(response).not.to.have.property('ssn');",
+              "});",
+              "",
+              "pm.test('Normalizes country and email', function () {",
+              "    pm.expect(response.countryOfRegistration).to.eql('US');",
+              "    pm.expect(response.contactEmail).to.eql('jordan.lee@example.com');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"companyName\": \"Acme Manufacturing LLC\",\n  \"businessStructure\": \"Limited liability company\",\n  \"industry\": \"Manufacturing\",\n  \"countryOfRegistration\": \"us\",\n  \"yearsInBusiness\": 8,\n  \"annualRevenue\": 1800000.00,\n  \"totalAssets\": 950000.00,\n  \"loanType\": \"Business term loan\",\n  \"requestedLoanAmount\": 250000.00,\n  \"requestedTermMonths\": 60,\n  \"loanPurpose\": \"Equipment purchase\",\n  \"creditScore\": 735,\n  \"contactName\": \"Jordan Lee\",\n  \"ssn\": \"123-45-6789\",\n  \"contactEmail\": \"JORDAN.LEE@EXAMPLE.COM\",\n  \"contactPhone\": \"(212) 555-0147\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/companies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "companies"
+          ]
+        }
+      }
+    },
+    {
+      "name": "2 - Get application by id",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Returns the created application', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(Number(pm.response.json().id)).to.eql(Number(pm.collectionVariables.get('applicationId')));",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/companies/{{applicationId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "companies",
+            "{{applicationId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "3 - Update loan application",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Returns 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const response = pm.response.json();",
+              "pm.test('Updates the requested amount and SSN last four', function () {",
+              "    pm.expect(response.requestedLoanAmount).to.eql(325000);",
+              "    pm.expect(response.ssnLastFour).to.eql('4567');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"companyName\": \"Acme Manufacturing LLC\",\n  \"businessStructure\": \"Limited liability company\",\n  \"industry\": \"Manufacturing\",\n  \"countryOfRegistration\": \"US\",\n  \"yearsInBusiness\": 8,\n  \"annualRevenue\": 1800000.00,\n  \"totalAssets\": 950000.00,\n  \"loanType\": \"Business term loan\",\n  \"requestedLoanAmount\": 325000.00,\n  \"requestedTermMonths\": 60,\n  \"loanPurpose\": \"Equipment purchase\",\n  \"creditScore\": 735,\n  \"contactName\": \"Jordan Lee\",\n  \"ssn\": \"219-09-4567\",\n  \"contactEmail\": \"jordan.lee@example.com\",\n  \"contactPhone\": \"+1 212-555-0147\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/companies/{{applicationId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "companies",
+            "{{applicationId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "4 - Get all applications",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Returns an application array', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json()).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/companies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "companies"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Validation - Restricted country",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Returns a country field error', function () {",
+              "    pm.response.to.have.status(400);",
+              "    pm.expect(pm.response.json().fieldErrors).to.have.property('countryOfRegistration');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"companyName\": \"Restricted Country Test LLC\",\n  \"businessStructure\": \"Limited liability company\",\n  \"industry\": \"Technology\",\n  \"countryOfRegistration\": \"IR\",\n  \"yearsInBusiness\": 3,\n  \"annualRevenue\": 500000.00,\n  \"totalAssets\": 200000.00,\n  \"loanType\": \"Business term loan\",\n  \"requestedLoanAmount\": 75000.00,\n  \"requestedTermMonths\": 36,\n  \"loanPurpose\": \"Working capital\",\n  \"creditScore\": 710,\n  \"contactName\": \"Jordan Lee\",\n  \"ssn\": \"123-45-6789\",\n  \"contactEmail\": \"jordan@example.com\",\n  \"contactPhone\": \"212-555-0147\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/companies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "companies"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Validation - Identity and contact fields",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Returns structured identity and contact errors', function () {",
+              "    pm.response.to.have.status(400);",
+              "    const errors = pm.response.json().fieldErrors;",
+              "    pm.expect(errors).to.have.property('contactName');",
+              "    pm.expect(errors).to.have.property('ssn');",
+              "    pm.expect(errors).to.have.property('contactEmail');",
+              "    pm.expect(errors).to.have.property('contactPhone');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"companyName\": \"Invalid Contact Test LLC\",\n  \"businessStructure\": \"Limited liability company\",\n  \"industry\": \"Technology\",\n  \"countryOfRegistration\": \"US\",\n  \"yearsInBusiness\": 3,\n  \"annualRevenue\": 500000.00,\n  \"totalAssets\": 200000.00,\n  \"loanType\": \"Business term loan\",\n  \"requestedLoanAmount\": 75000.00,\n  \"requestedTermMonths\": 36,\n  \"loanPurpose\": \"Working capital\",\n  \"creditScore\": 710,\n  \"contactName\": \"Jordan 123\",\n  \"ssn\": \"000-12-3456\",\n  \"contactEmail\": \"not-an-email\",\n  \"contactPhone\": \"555-12\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/companies",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "companies"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Error - Application not found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Returns structured 404 response', function () {",
+              "    pm.response.to.have.status(404);",
+              "    pm.expect(pm.response.json().message).to.include('was not found');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/companies/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "companies",
+            "999999"
+          ]
+        }
+      }
+    }
+  ]
+}
