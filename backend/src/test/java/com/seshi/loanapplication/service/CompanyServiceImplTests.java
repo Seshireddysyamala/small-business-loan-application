@@ -1,6 +1,7 @@
 package com.seshi.loanapplication.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,14 +16,19 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.seshi.loanapplication.dto.CompanyRequest;
 import com.seshi.loanapplication.dto.CompanyResponse;
+import com.seshi.loanapplication.entity.Company;
 import com.seshi.loanapplication.exception.LoanApplicationNotFoundException;
 import com.seshi.loanapplication.mapper.CompanyMapper;
-import com.seshi.loanapplication.model.Company;
+import com.seshi.loanapplication.messaging.event.CreditRiskBand;
+import com.seshi.loanapplication.messaging.event.LoanApplicationEvent;
+import com.seshi.loanapplication.messaging.event.LoanApplicationEventType;
+import com.seshi.loanapplication.messaging.publisher.LoanApplicationEventPublisher;
 import com.seshi.loanapplication.repository.CompanyRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,13 +37,16 @@ class CompanyServiceImplTests {
     @Mock
     private CompanyRepository companyRepository;
 
+    @Mock
+    private LoanApplicationEventPublisher eventPublisher;
+
     private CompanyMapper companyMapper;
     private CompanyServiceImpl companyService;
 
     @BeforeEach
     void setUp() {
         companyMapper = new CompanyMapper();
-        companyService = new CompanyServiceImpl(companyRepository, companyMapper);
+        companyService = new CompanyServiceImpl(companyRepository, companyMapper, eventPublisher);
     }
 
     @Test
@@ -58,6 +67,17 @@ class CompanyServiceImplTests {
         assertEquals("6789", response.ssnLastFour());
         assertEquals("SUBMITTED", response.applicationStatus());
         verify(companyRepository).save(any(Company.class));
+
+        ArgumentCaptor<LoanApplicationEvent> eventCaptor = ArgumentCaptor.forClass(LoanApplicationEvent.class);
+        verify(eventPublisher).publish(eventCaptor.capture());
+        LoanApplicationEvent event = eventCaptor.getValue();
+        assertEquals(LoanApplicationEventType.CREATED, event.eventType());
+        assertEquals(42L, event.applicationId());
+        assertEquals(new BigDecimal("250000.00"), event.requestedLoanAmount());
+        assertEquals(2, event.schemaVersion());
+        assertEquals(CreditRiskBand.MEDIUM, event.creditRiskBand());
+        assertNotNull(event.eventId());
+        assertNotNull(event.occurredAt());
     }
 
     @Test
@@ -76,6 +96,12 @@ class CompanyServiceImplTests {
         assertEquals(new BigDecimal("325000.00"), response.requestedLoanAmount());
         assertEquals("SUBMITTED", response.applicationStatus());
         verify(companyRepository).save(existingCompany);
+
+        ArgumentCaptor<LoanApplicationEvent> eventCaptor = ArgumentCaptor.forClass(LoanApplicationEvent.class);
+        verify(eventPublisher).publish(eventCaptor.capture());
+        assertEquals(LoanApplicationEventType.UPDATED, eventCaptor.getValue().eventType());
+        assertEquals(7L, eventCaptor.getValue().applicationId());
+        assertEquals(new BigDecimal("325000.00"), eventCaptor.getValue().requestedLoanAmount());
     }
 
     @Test

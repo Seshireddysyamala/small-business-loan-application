@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.seshi.loanapplication.dto.CompanyRequest;
 import com.seshi.loanapplication.dto.CompanyResponse;
-import com.seshi.loanapplication.model.Company;
+import com.seshi.loanapplication.entity.Company;
 
 @Component
 public class CompanyMapper {
