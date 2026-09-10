@@ -22,3 +22,12 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Maven build output and local service state
+backend/target/
+underwriting-service/target/
+underwriting-service/data/
+
+# Local secrets and environment overrides
+backend/.env
+underwriting-service/.env

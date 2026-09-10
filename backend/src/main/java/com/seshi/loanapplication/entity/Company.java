@@ -1,4 +1,4 @@
-package com.seshi.loanapplication.model;
+package com.seshi.loanapplication.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -217,6 +217,15 @@ public class Company {
 
     public String getApplicationStatus() {
         return applicationStatus;
+    }
+
+    public void applyDecision(String decision) {
+        if (!"APPROVED".equals(decision)
+                && !"DECLINED".equals(decision)
+                && !"MANUAL_REVIEW".equals(decision)) {
+            throw new IllegalArgumentException("Unsupported loan decision: " + decision);
+        }
+        applicationStatus = decision;
     }
 
     public LocalDateTime getSubmittedAt() {

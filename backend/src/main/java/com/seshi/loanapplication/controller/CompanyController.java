@@ -28,6 +28,7 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
+
     @GetMapping
     public List<CompanyResponse> getCompanies() {
         return companyService.getCompanies();

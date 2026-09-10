@@ -9,7 +9,10 @@ import com.seshi.loanapplication.dto.CompanyRequest;
 import com.seshi.loanapplication.dto.CompanyResponse;
 import com.seshi.loanapplication.exception.LoanApplicationNotFoundException;
 import com.seshi.loanapplication.mapper.CompanyMapper;
-import com.seshi.loanapplication.model.Company;
+import com.seshi.loanapplication.entity.Company;
+import com.seshi.loanapplication.messaging.event.LoanApplicationEvent;
+import com.seshi.loanapplication.messaging.event.LoanApplicationEventType;
+import com.seshi.loanapplication.messaging.publisher.LoanApplicationEventPublisher;
 import com.seshi.loanapplication.repository.CompanyRepository;
 
 @Service
@@ -18,10 +21,15 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
+    private final LoanApplicationEventPublisher eventPublisher;
 
-    public CompanyServiceImpl(CompanyRepository companyRepository, CompanyMapper companyMapper) {
+    public CompanyServiceImpl(
+            CompanyRepository companyRepository,
+            CompanyMapper companyMapper,
+            LoanApplicationEventPublisher eventPublisher) {
         this.companyRepository = companyRepository;
         this.companyMapper = companyMapper;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -37,7 +45,9 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyResponse createCompany(CompanyRequest request) {
         Company company = companyMapper.toEntity(request);
         Company savedCompany = companyRepository.save(company);
-        return companyMapper.toResponse(savedCompany);
+        CompanyResponse response = companyMapper.toResponse(savedCompany);
+        eventPublisher.publish(LoanApplicationEvent.from(response, LoanApplicationEventType.CREATED));
+        return response;
     }
 
     @Override
@@ -51,7 +61,9 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = findCompany(id);
         companyMapper.updateEntity(company, request);
         Company savedCompany = companyRepository.save(company);
-        return companyMapper.toResponse(savedCompany);
+        CompanyResponse response = companyMapper.toResponse(savedCompany);
+        eventPublisher.publish(LoanApplicationEvent.from(response, LoanApplicationEventType.UPDATED));
+        return response;
     }
 
     private Company findCompany(Long id) {
